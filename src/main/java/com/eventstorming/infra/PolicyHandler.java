@@ -88,8 +88,8 @@ public class PolicyHandler{
 var eventDispatchers = {};
 this.policies.forEach(policy => {
 
-    var aggergate = policy.relationEventInfo.eventValue.aggregate;
-    var eventDispatcher = eventDispatchers[aggergate.name];
+    var aggregate = policy.relationEventInfo.eventValue.aggregate;
+    var eventDispatcher = eventDispatchers[aggregate.name];
 
     if(!eventDispatcher){
         eventDispatcher = {
@@ -97,7 +97,7 @@ this.policies.forEach(policy => {
             eventAndPolicy: []
         };
 
-        eventDispatchers[aggergate.name] = eventDispatcher;
+        eventDispatchers[aggregate.name] = eventDispatcher;
     }
 
     eventDispatcher.eventAndPolicy.push({event: policy.relationEventInfo.eventValue, policy: policy});
