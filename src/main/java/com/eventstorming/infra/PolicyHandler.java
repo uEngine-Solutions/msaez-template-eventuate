@@ -25,7 +25,8 @@ import {{options.package}}.domain.*;
 public class PolicyHandler{
 
 
-    {{#contexts.eventDispatchers}}
+    {{#contexts}}
+        {{#eventDispatchers}}
 
     @Bean
     public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
@@ -37,7 +38,8 @@ public class PolicyHandler{
       .build());
     }
 
-    {{/contexts.eventDispatchers}}
+        {{/eventDispatchers}}
+    {{/contexts}}
 
 
     {{#aggregates}}
