@@ -111,7 +111,7 @@ this.policies.forEach(policy => {
     eventDispatcher.eventAndPolicy.push({event: event, policy: policy});
 });
 
-this.contexts["eventDispatchers"] = eventDispatchers;
+this.contexts["eventDispatchers"] = eventDispatchers.values();
 
 
 window.$HandleBars.registerHelper('todo', function (description) {
