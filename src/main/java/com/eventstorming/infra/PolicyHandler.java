@@ -48,7 +48,7 @@ public class PolicyHandler{
     }
 
 
-    {{log relationEventInfo}}
+    {{#log relationEventInfo}}{{/log}}
 
     {{#relationEventInfo}}
     @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='{{eventValue.namePascalCase}}'")
