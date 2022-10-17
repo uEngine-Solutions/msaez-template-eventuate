@@ -49,7 +49,7 @@ public class PolicyHandler{
 
 
     {{log relationEventInfo}}
-    
+
     {{#relationEventInfo}}
     @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='{{eventValue.namePascalCase}}'")
     public void whenever{{eventValue.namePascalCase}}_{{../namePascalCase}}(@Payload {{eventValue.namePascalCase}} {{eventValue.nameCamelCase}}){
@@ -94,7 +94,7 @@ window.$HandleBars.registerHelper('todo', function (description) {
 
 window.$HandleBars.registerHelper('log', function (msg) {
 
-    console.log(msg);
+    console.log("log for template", msg);
      return null;
 });
 
