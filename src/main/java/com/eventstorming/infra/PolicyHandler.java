@@ -112,7 +112,7 @@ this.policies.forEach(policy => {
 });
 
 if(eventDispatchers)
-    this.contexts["eventDispatchers"] = eventDispatchers.values();
+    this.contexts["eventDispatchers"] = Object.values(eventDispatchers);
 
 
 window.$HandleBars.registerHelper('todo', function (description) {
