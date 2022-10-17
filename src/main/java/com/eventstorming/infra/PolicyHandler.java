@@ -38,7 +38,7 @@ public class PolicyHandler{
     {{/relationAggregateInfo}}
 
 
-    {{#eventDispatchers}}
+    {{#contexts.eventDispatchers}}
 
     @Bean
     public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
@@ -48,7 +48,7 @@ public class PolicyHandler{
       .build());
     }
 
-    {{/eventDispatchers}}
+    {{/contexts.eventDispatchers}}
 
 
     {{#relationEventInfo}}
@@ -86,7 +86,7 @@ public class PolicyHandler{
 <function>
 
 var eventDispatchers = {};
-policies.forEach(policy){
+policies.forEach(policy => {
 
     var aggergate = policy.relationEventInfo.eventValue.aggregate;
     var eventDispatcher = eventDispatchers[aggergate.name];
@@ -101,7 +101,7 @@ policies.forEach(policy){
     }
 
     eventDispatcher.eventAndPolicy.push({event: policy.relationEventInfo.eventValue, policy: policy});
-}
+});
 
 contexts["eventDispatchers"] = eventDispatchers;
 
