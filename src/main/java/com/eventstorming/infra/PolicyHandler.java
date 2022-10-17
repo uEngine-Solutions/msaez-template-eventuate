@@ -38,17 +38,18 @@ public class PolicyHandler{
     {{/relationAggregateInfo}}
 
 
+    {{#relationEventInfo}}
+
     @Bean
     public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
       return domainEventDispatcherFactory.make("orderServiceEvents", DomainEventHandlersBuilder
-      .forAggregateType("{{labshopeventuate.domain.Order}}")
-      .onEvent(OrderPlaced.class, PolicyHandler::wheneverOrderPlaced_DecreaseStock)
-      //.onEvent(OrderCancelledEvent.class, this::handleOrderCancelledEvent)
+      .forAggregateType("{{eventValue.aggregate.namePascalCase}}")
+      .onEvent({{eventValue.namePascalCase}}.class, PolicyHandler::whenever{{eventValue.namePascalCase}}{{../namePascalCase}})
       .build());
     }
 
+    {{/relationEventInfo}}
 
-    {{#log relationEventInfo}}{{/log}}
 
     {{#relationEventInfo}}
     @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='{{eventValue.namePascalCase}}'")
@@ -75,7 +76,7 @@ public class PolicyHandler{
         
 
     }
-        {{/relationEventInfo}}
+    {{/relationEventInfo}}
 
     {{/policies}}
 }
