@@ -86,7 +86,7 @@ public class PolicyHandler{
 <function>
 
 var eventDispatchers = {};
-policies.forEach(policy => {
+this.policies.forEach(policy => {
 
     var aggergate = policy.relationEventInfo.eventValue.aggregate;
     var eventDispatcher = eventDispatchers[aggergate.name];
@@ -103,7 +103,7 @@ policies.forEach(policy => {
     eventDispatcher.eventAndPolicy.push({event: policy.relationEventInfo.eventValue, policy: policy});
 });
 
-contexts["eventDispatchers"] = eventDispatchers;
+this.contexts["eventDispatchers"] = eventDispatchers;
 
 
 window.$HandleBars.registerHelper('todo', function (description) {
