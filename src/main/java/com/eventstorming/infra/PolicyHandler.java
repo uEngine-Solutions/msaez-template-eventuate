@@ -23,6 +23,23 @@ import {{options.package}}.domain.*;
 @Transactional
 @Configuration
 public class PolicyHandler{
+
+
+    {{#contexts.eventDispatchers}}
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
+      return domainEventDispatcherFactory.make("{{aggregate.namePascalCase}}Events", DomainEventHandlersBuilder
+      .forAggregateType("{{aggregate.namePascalCase}}")
+      {{#eventAndPolicy}}
+      .onEvent({{event.namePascalCase}}.class, PolicyHandler::whenever{{event.namePascalCase}}_{{policy.namePascalCase}})
+      {{/eventAndPolicy}}
+      .build());
+    }
+
+    {{/contexts.eventDispatchers}}
+
+
     {{#aggregates}}
     @Autowired {{namePascalCase}}Repository {{nameCamelCase}}Repository;
     {{/aggregates}}
@@ -37,22 +54,6 @@ public class PolicyHandler{
 
     {{/relationAggregateInfo}}
 
-
-    {{#contexts}}
-        {{#eventDispatchers}}
-
-    @Bean
-    public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
-      return domainEventDispatcherFactory.make("{{aggregate.namePascalCase}}Events", DomainEventHandlersBuilder
-      .forAggregateType("{{aggregate.namePascalCase}}")
-      {{#eventAndPolicy}}
-      .onEvent({{event.namePascalCase}}.class, PolicyHandler::whenever{{event.namePascalCase}}_{{policy.namePascalCase}})
-      {{/eventAndPolicy}}
-      .build());
-    }
-        {{/eventDispatchers}}
-
-    {{/contexts}}
 
 
     {{#relationEventInfo}}
