@@ -38,17 +38,21 @@ public class PolicyHandler{
     {{/relationAggregateInfo}}
 
 
-    {{#contexts.eventDispatchers}}
+    {{#contexts}}
+        {{#eventDispatchers}}
 
     @Bean
     public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
       return domainEventDispatcherFactory.make("{{aggregate.namePascalCase}}Events", DomainEventHandlersBuilder
       .forAggregateType("{{aggregate.namePascalCase}}")
-      .onEvent({{eventAndPolicy.event.namePascalCase}}.class, PolicyHandler::whenever{{eventAndPolicy.event.namePascalCase}}_{{eventAndPolicy.policy.namePascalCase}})
+      {{#eventAndPolicy}}
+      .onEvent({{event.namePascalCase}}.class, PolicyHandler::whenever{{event.namePascalCase}}_{{policy.namePascalCase}})
+      {{/eventAndPolicy}}
       .build());
     }
+        {{/eventDispatchers}}
 
-    {{/contexts.eventDispatchers}}
+    {{/contexts}}
 
 
     {{#relationEventInfo}}
