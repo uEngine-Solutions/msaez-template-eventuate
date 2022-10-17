@@ -1,0 +1,153 @@
+forEach: Aggregate
+fileName: {{namePascalCase}}Picker.vue
+path: frontend/src/components/listers
+---
+<template>
+    <div>
+        <v-list two-line v-if="list.length > 0">
+            <v-list-item-group 
+                    v-model="selected" 
+                    color="indigo"
+                    @change="select"
+            >
+                <v-list-item v-for="(item, idx) in list" :key="idx">
+                    <template v-slot:default="{ active }">
+                        <v-list-item-avatar color="grey darken-1">
+                        {{#aggregateRoot.fieldDescriptors}}
+                            {{#isLob}}
+                            <v-img :src="item.{{nameCamelCase}}"></v-img>
+                            {{/isLob}}
+                        {{/aggregateRoot.fieldDescriptors}}
+                        </v-list-item-avatar>
+                        
+                        <v-list-item-content>
+                            <v-list-item-title>
+                            {{#aggregateRoot.fieldDescriptors}}
+                            {{#isName}}
+                                \{{item.{{nameCamelCase}} }}
+                            {{/isName}}
+                            {{/aggregateRoot.fieldDescriptors}}
+                            </v-list-item-title>
+                            {{#aggregateRoot.fieldDescriptors}}
+                            {{#if (isNotId nameCamelCase)}}
+                            {{^isLob}}
+                            <v-list-item-subtitle>
+                                {{namePascalCase}} :  \{{item.{{nameCamelCase}} }}
+                            </v-list-item-subtitle>
+                            {{/isLob}}
+                            {{/if}}
+                            {{/aggregateRoot.fieldDescriptors}}
+                        </v-list-item-content>
+
+                        <v-list-item-action>
+                            <v-checkbox :input-value="active" color="indigo"></v-checkbox>
+                        </v-list-item-action>
+                    </template>
+                </v-list-item>
+            </v-list-item-group>
+        </v-list>
+    </div>
+</template>
+
+
+<script>
+    const axios = require('axios').default;
+
+    export default {
+        name: '{{namePascalCase}}Picker',
+        props: {
+            value: [String, Object, Array, Number, Boolean],
+        },
+        data: () => ({
+            list: [],
+            selected: null,
+        }),
+        async created() {
+            var me = this;
+            var temp = await axios.get(axios.fixUrl('/{{namePlural}}'))
+            if(temp.data) {
+                {{#if (checkGeneralization aggregateRoot.entities.relations nameCamelCase)}}
+                if(temp.data._embedded) {
+                    Object.values(temp.data._embedded).forEach(function(val) {
+                        if(val.length > 0) {
+                            me.list = [...me.list, ...val]
+                        }
+                    })
+                }
+                {{else}}
+                me.list = temp.data._embedded.{{namePlural}};
+                {{/if}}
+            }
+
+            if(me.value && typeof me.value == "object" && Object.values(me.value)[0]) {
+                var id = Object.values(me.value)[0];
+                var tmpValue = await axios.get(axios.fixUrl('/{{namePlural}}/' + id))
+                if(tmpValue.data) {
+                    var val = tmpValue.data
+                    me.list.forEach(function(item, idx) {
+                        if(item.name == val.name) {
+                            me.selected = idx
+                        }
+                    })
+                }
+            }
+        },
+        methods: {
+            select(val) {
+                var obj = {}
+                if(val != undefined) {
+                    var arr = this.list[val]._links.self.href.split('/');
+                    {{#aggregateRoot.fieldDescriptors}}
+                    {{#isKey}}obj['{{nameCamelCase}}'] = arr[4]; {{/isKey}}
+                    {{#isName}}obj['nameField'] = this.list[val].{{nameCamelCase}}; {{/isName}}
+                    {{/aggregateRoot.fieldDescriptors}}
+                    this.$emit('selected', obj);
+                }
+            },
+        },
+    };
+</script>
+
+
+<function>
+    window.$HandleBars.registerHelper('isNotId', function (className) {
+        return (className != 'id')
+    });
+
+    window.$HandleBars.registerHelper('checkGeneralization', function (relations, name) {
+        try {
+            if (typeof relations == "undefined") {
+                return 
+            } else {
+                for (var i = 0; i < relations.length; i ++ ) {
+                    if (relations[i] != null) {
+                        if (relations[i].targetElement != "undefined") {
+                            if(relations[i].targetElement.name.toLowerCase() == name && relations[i].relationType.includes("Generalization")) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    });
+
+    window.$HandleBars.registerHelper('isGeneralization', function (toName, name, type) {
+        try {
+            if(toName == null || name == null || type == null) {
+                return false;
+            } else {
+                if(toName == name && type.includes("Generalization")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    });
+</function>
