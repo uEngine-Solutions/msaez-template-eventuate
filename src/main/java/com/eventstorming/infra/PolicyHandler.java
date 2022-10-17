@@ -4,17 +4,8 @@ mergeType: template
 ---
 package {{options.package}}.infra;
 
-import javax.naming.NameParser;
-
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
-
-import {{options.package}}.config.kafka.KafkaProcessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import {{options.package}}.domain.*;
 
@@ -46,7 +37,6 @@ public class PolicyHandler{
     @Autowired {{namePascalCase}}Repository {{nameCamelCase}}Repository;
     {{/aggregates}}
     
-    @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString){}
 
     {{#policies}}
@@ -59,7 +49,6 @@ public class PolicyHandler{
 
 
     {{#relationEventInfo}}
-    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='{{eventValue.namePascalCase}}'")
     public void whenever{{eventValue.namePascalCase}}_{{../namePascalCase}}(@Payload {{eventValue.namePascalCase}} {{eventValue.nameCamelCase}}){
 
         {{eventValue.namePascalCase}} event = {{eventValue.nameCamelCase}};
