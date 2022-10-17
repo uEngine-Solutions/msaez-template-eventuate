@@ -38,17 +38,17 @@ public class PolicyHandler{
     {{/relationAggregateInfo}}
 
 
-    {{#relationEventInfo}}
+    {{#eventDispatchers}}
 
     @Bean
     public DomainEventDispatcher domainEventDispatcher(DomainEventDispatcherFactory domainEventDispatcherFactory) {
-      return domainEventDispatcherFactory.make("orderServiceEvents", DomainEventHandlersBuilder
-      .forAggregateType("{{eventValue.aggregate.namePascalCase}}")
-      .onEvent({{eventValue.namePascalCase}}.class, PolicyHandler::whenever{{eventValue.namePascalCase}}{{../namePascalCase}})
+      return domainEventDispatcherFactory.make("{{aggregate.namePascalCase}}Events", DomainEventHandlersBuilder
+      .forAggregateType("{{aggregate.namePascalCase}}")
+      .onEvent({{eventAndPolicy.event.namePascalCase}}.class, PolicyHandler::whenever{{eventAndPolicy.event.namePascalCase}}_{{eventAndPolicy.policy.namePascalCase}})
       .build());
     }
 
-    {{/relationEventInfo}}
+    {{/eventDispatchers}}
 
 
     {{#relationEventInfo}}
@@ -84,6 +84,28 @@ public class PolicyHandler{
 
 
 <function>
+
+var eventDispatchers = {};
+policies.forEach(policy){
+
+    var aggergate = policy.relationEventInfo.eventValue.aggregate;
+    var eventDispatcher = eventDispatchers[aggergate.name];
+
+    if(!eventDispatcher){
+        eventDispatcher = {
+            aggregate: aggregate,
+            eventAndPolicy: []
+        };
+
+        eventDispatchers[aggergate.name] = eventDispatcher;
+    }
+
+    eventDispatcher.eventAndPolicy.push({event: policy.relationEventInfo.eventValue, policy: policy});
+}
+
+contexts["eventDispatchers"] = eventDispatchers;
+
+
 window.$HandleBars.registerHelper('todo', function (description) {
 
     if(description){
